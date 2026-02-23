@@ -5,6 +5,7 @@ export interface IUser {
     fullName: string
     email: string
     password: string
+    isValid: boolean
 }
 
 const userSchema = new Schema<IUser>({
@@ -26,6 +27,10 @@ const userSchema = new Schema<IUser>({
         required: true,
         min: [6, "Minimum 6 characters are required"]
     },
+    isValid: {
+        type: Boolean,
+        default: false
+    }
 })
 
 const User = mongoose.model("User", userSchema)

@@ -21,4 +21,12 @@ export default class UserRepository {
             return false
         }
     }
+
+    static verifyUser = async (id: string) => {
+        return await User.findByIdAndUpdate(
+            id,
+            { isValid: true },
+            { new: true }
+        )
+    }
 }

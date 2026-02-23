@@ -7,6 +7,9 @@ interface env {
     jwtSecret: string
     nodeEnv: string
     dbUrl: string
+    nodemailerEmail: string
+    nodemailerPass: string
+    appName: string
 }
 
 const ENV: env = {
@@ -15,6 +18,9 @@ const ENV: env = {
     dbUrl: String(process.env.DATABASE_URL),
     jwtSecret: String(process.env.JWT_SECRET),
     nodeEnv: String(process.env.NODE_ENV),
+    nodemailerEmail: String(process.env.NODEMAILER_MAIL),
+    nodemailerPass: String(process.env.NODEMAILER_PASS),
+    appName: "DevTrackr"
 }
 
 export default ENV;
