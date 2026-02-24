@@ -13,7 +13,7 @@ export default class MailService {
 
     static async emailVerify(email: string, code: number): Promise<void> {
         try {
-            console.log(ENV)
+            // console.log(ENV)
             const options = {
                 from: `"${ENV.appName}" <${ENV.nodemailerEmail}>`,
                 to: email,
@@ -27,6 +27,7 @@ export default class MailService {
           </div>
         `,
             }
+            // console.log(options)
 
             await this.transporter.sendMail(options)
 

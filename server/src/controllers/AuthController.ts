@@ -71,22 +71,22 @@ export default class AuthController {
             }
 
             const user: any = await UserRepository.isEmailExist(email)
+
             if (!user) {
                 return res.status(400).json({
                     message: "Invalid email",
                     success: false
                 })
             }
-
             const otpData = await OtpRepository.getData(String(user?._id))
-
+            console.log(otpData)
             if (!otpData) {
                 return res.status(400).json({
                     message: "OTP not found or expired",
                     success: false
                 })
             }
-
+            
             if (otpData.otpExpiresAt < new Date()) {
                 return res.status(400).json({
                     message: "OTP expired",
@@ -100,6 +100,7 @@ export default class AuthController {
                     success: false
                 })
             }
+            console.log("here")
 
             await UserRepository.verifyUser(String(user?._id))
 
@@ -179,7 +180,6 @@ export default class AuthController {
         try {
             const { email } = req.body;
 
-            console.log(email)
             if (!email) {
                 return res.status(400).json({
                     success: false,
@@ -187,7 +187,9 @@ export default class AuthController {
                 });
             }
 
+
             const user = await UserRepository.isEmailExist(email)
+            console.log(user)
             if (!user) {
                 return res.status(400).json({
                     success: false,
@@ -196,18 +198,7 @@ export default class AuthController {
             }
             let otp;
             otp = await OtpRepository.resendOtp(email, user._id);
-
-            if (!otp) {
-                return res.status(400).json({
-                    success: false,
-                    message: "OTP has expired or cannot be generated. We are sending new otp now"
-                });
-            } else {
-                const code = Math.floor(100000 + Math.random() * 900000).toString()
-                otp = await OtpRepository.saveOtp(user._id, String(code))
-            }
-
-            console.log("here")
+            console.log(otp)
 
             await MailService.emailVerify(email, Number(otp.otp));
 

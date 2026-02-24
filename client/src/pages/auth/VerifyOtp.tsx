@@ -31,7 +31,6 @@ export default function VerifyOtp() {
         mutationFn: () => verifyOtpApi({ email: params.email, otp: otpValue }),
         onSuccess: (response: any) => {
             ShowSuccessToast(response.data.message || "OTP verified successfully")
-            // You can redirect user here after verification
         },
         onError: (err: any) => {
             ShowErrorToast(err?.response?.data?.message || "OTP verification failed")

@@ -4,7 +4,7 @@ export default class UserRepository {
     static isEmailExist = async (email: String) => {
         const user = await User.findOne({ email })
         if (user) {
-            // console.log(user)
+            console.log(user)
             return user;
         }
         return false;
@@ -24,10 +24,19 @@ export default class UserRepository {
     }
 
     static verifyUser = async (id: string) => {
-        return await User.findByIdAndUpdate(
-            id,
-            { isValid: true },
-            { new: true }
-        )
-    }
+        try {
+            const updatedUser = await User.findByIdAndUpdate(
+                id,
+                { $set: { isValid: true } },
+                {
+                    returnDocument: "after"
+                }
+            ).lean();
+
+            return updatedUser;
+        } catch (error) {
+            console.error("Verify User Error:", error);
+            throw new Error("Failed to verify user");
+        }
+    };
 }
