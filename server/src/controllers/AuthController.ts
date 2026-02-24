@@ -3,6 +3,7 @@ import UserRepository from "../repositories/userRepository.ts"
 import AuthService from "../services/AuthService.ts"
 import OtpRepository from "../repositories/OtpRepository.ts"
 import MailService from "../services/MailService.ts"
+import Otp from "../models/otp.model.ts"
 
 export default class AuthController {
     static signup = async (req: Request, res: Response): Promise<Response> => {
@@ -17,6 +18,7 @@ export default class AuthController {
             }
 
             const emailExists = await UserRepository.isEmailExist(email)
+            // console.log(emailExists)
             if (emailExists) {
                 return res.status(400).json({
                     message: "Email already exists",
@@ -35,16 +37,18 @@ export default class AuthController {
             if (!user) {
                 return res.status(500).json({
                     message: "Error while creating user",
-                    success: false
+                    success: false,
                 })
             }
             const otp = Math.floor(100000 + Math.random() * 900000).toString()
 
+            await OtpRepository.saveOtp(user._id, String(otp))
             await MailService.emailVerify(user.email, Number(otp))
 
             return res.status(201).json({
                 success: true,
                 message: "User created. Please verify OTP sent to email.",
+                user
             })
 
         } catch (error) {
@@ -116,7 +120,6 @@ export default class AuthController {
         }
     }
 
-
     static login = async (req: Request, res: Response): Promise<Response> => {
         try {
             const { email, password } = req.body
@@ -171,4 +174,55 @@ export default class AuthController {
             })
         }
     }
+
+    static resendOtp = async (req: Request, res: Response) => {
+        try {
+            const { email } = req.body;
+
+            console.log(email)
+            if (!email) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Email is required to send an OTP."
+                });
+            }
+
+            const user = await UserRepository.isEmailExist(email)
+            if (!user) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Email is not exists."
+                });
+            }
+            let otp;
+            otp = await OtpRepository.resendOtp(email, user._id);
+
+            if (!otp) {
+                return res.status(400).json({
+                    success: false,
+                    message: "OTP has expired or cannot be generated. We are sending new otp now"
+                });
+            } else {
+                const code = Math.floor(100000 + Math.random() * 900000).toString()
+                otp = await OtpRepository.saveOtp(user._id, String(code))
+            }
+
+            console.log("here")
+
+            await MailService.emailVerify(email, Number(otp.otp));
+
+            return res.status(200).json({
+                success: true,
+                message: "OTP sent successfully to your email."
+            });
+
+        } catch (error) {
+            console.error("Resend OTP Error:", error);
+
+            return res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            });
+        }
+    };
 }

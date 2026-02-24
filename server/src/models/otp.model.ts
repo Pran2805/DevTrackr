@@ -1,13 +1,13 @@
 import mongoose, { Schema, Types } from "mongoose"
 
 export interface IOtp {
-  user: Types.ObjectId
+  userId: Types.ObjectId
   otp: string
   otpExpiresAt: Date
 }
 
 const otpSchema = new Schema<IOtp>({
-  user: {
+  userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,

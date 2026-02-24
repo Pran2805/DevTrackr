@@ -1,3 +1,4 @@
+import type { Types } from "mongoose";
 import Otp from "../models/otp.model.ts"
 
 export default class OtpRepository {
@@ -9,18 +10,19 @@ export default class OtpRepository {
         return data;
     }
 
-    static saveOtp = async (userId: string, otp: string) => {
+    static saveOtp = async (userId: Types.ObjectId, otp: string) => {
         try {
-            await Otp.deleteMany({ user: userId })
+            await Otp.deleteMany({ userId })
 
             const otpDoc = await Otp.create({
-                user: userId,
+                userId,
                 otp,
-                otpExpiresAt: new Date(Date.now() + 5 * 60 * 1000)
+                otpExpiresAt: new Date(Date.now() + 5 * 60 * 1000),
             })
 
             return otpDoc
-        } catch (error) {
+        } catch (error: any) {
+            console.log(error)
             throw new Error("Failed to save OTP")
         }
     }
@@ -31,6 +33,25 @@ export default class OtpRepository {
             await Otp.deleteMany({ user: userId })
         } catch (error) {
             throw new Error("Failed to delete OTP")
+        }
+    }
+
+    static resendOtp = async (email: string, userId: Types.ObjectId) => {
+        try {
+            // Generate new OTP
+            const otp = Math.floor(100000 + Math.random() * 900000).toString()
+            const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000)
+
+            // Upsert OTP: replace old or create new
+            const otpDoc = await Otp.findOneAndUpdate(
+                { email },
+                { otp, otpExpiresAt, userId },
+                { upsert: true, new: true }
+            )
+
+            return otpDoc
+        } catch (error) {
+            throw new Error("Failed to resend OTP")
         }
     }
 }

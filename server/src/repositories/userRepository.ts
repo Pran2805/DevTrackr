@@ -2,8 +2,9 @@ import User, { type IUser } from "../models/user.model.ts";
 
 export default class UserRepository {
     static isEmailExist = async (email: String) => {
-        const user = await User.find({ email })
+        const user = await User.findOne({ email })
         if (user) {
+            // console.log(user)
             return user;
         }
         return false;
