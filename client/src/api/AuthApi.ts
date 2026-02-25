@@ -11,15 +11,16 @@ export async function SignupApi(data: SignupData) {
     return response.data;
 }
 
-export async function resendApi(email: {
-    email: any
-}) {
-    console.log(email)
+export async function resendApi(email: { email: any }) {
     const response = await axiosInstance.post("/auth/resend", email);
     return response.data;
 }
 export async function verifyOtpApi(data: any) {
-console.log(data)
     const response = await axiosInstance.post("/auth/verify", data);
+    return response.data;
+}
+
+export async function LoginApi(data: any) {
+    const response = await axiosInstance.post("/auth/login", data)
     return response.data;
 }

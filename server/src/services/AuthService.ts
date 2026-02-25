@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import ENV from '../utils/env.ts'
-import type { Response } from 'express'
 
 export default class AuthService {
     static passwordHashing = async (password: string) => {
@@ -9,17 +8,12 @@ export default class AuthService {
         return bcrypt.hash(password, salt)
     }
 
-    static createToken = (userId: string, res: Response) => {
-        const token = jwt.sign({ "userId": userId }, ENV.jwtSecret, {
+    static createToken = (userId: string) => {
+        const token = jwt.sign({ userId }, ENV.jwtSecret, {
             expiresIn: '7d'
         })
 
-        return res.cookie("auth", token, {
-            httpOnly: true,
-            secure: ENV.nodeEnv === "production",
-            sameSite: "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+        return token;
     }
 
     static passwordCheck = async (password: string, hash: string) => {

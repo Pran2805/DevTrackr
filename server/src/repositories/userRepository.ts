@@ -4,7 +4,6 @@ export default class UserRepository {
     static isEmailExist = async (email: String) => {
         const user = await User.findOne({ email })
         if (user) {
-            console.log(user)
             return user;
         }
         return false;

@@ -4,6 +4,7 @@ import AuthService from "../services/AuthService.ts"
 import OtpRepository from "../repositories/OtpRepository.ts"
 import MailService from "../services/MailService.ts"
 import Otp from "../models/otp.model.ts"
+import ENV from "../utils/env.ts"
 
 export default class AuthController {
     static signup = async (req: Request, res: Response): Promise<Response> => {
@@ -18,7 +19,7 @@ export default class AuthController {
             }
 
             const emailExists = await UserRepository.isEmailExist(email)
-            // console.log(emailExists)
+
             if (emailExists) {
                 return res.status(400).json({
                     message: "Email already exists",
@@ -79,14 +80,14 @@ export default class AuthController {
                 })
             }
             const otpData = await OtpRepository.getData(String(user?._id))
-            console.log(otpData)
+
             if (!otpData) {
                 return res.status(400).json({
                     message: "OTP not found or expired",
                     success: false
                 })
             }
-            
+
             if (otpData.otpExpiresAt < new Date()) {
                 return res.status(400).json({
                     message: "OTP expired",
@@ -100,13 +101,19 @@ export default class AuthController {
                     success: false
                 })
             }
-            console.log("here")
 
             await UserRepository.verifyUser(String(user?._id))
 
             await OtpRepository.deleteOtp(user._id)
 
-            AuthService.createToken(String(user._id), res)
+            const token = await AuthService.createToken(String(user._id))
+
+            res.cookie("auth", token, {
+                httpOnly: true,
+                secure: ENV.nodeEnv === "production",
+                sameSite: "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            })
 
             return res.status(200).json({
                 success: true,
@@ -141,7 +148,6 @@ export default class AuthController {
                 })
             }
 
-            // 🔥 Prevent unverified login
             if (!user.isValid) {
                 return res.status(403).json({
                     message: "Please verify your email first",
@@ -161,12 +167,18 @@ export default class AuthController {
                 })
             }
 
-            AuthService.createToken(user._id.toString(), res)
-
-            return res.status(200).json({
-                success: true,
-                message: "User logged in successfully"
+            const token = await AuthService.createToken(String(user._id))
+            
+            return res.cookie("auth", token, {
+                httpOnly: true,
+                secure: ENV.nodeEnv === "production",
+                sameSite: "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000
             })
+                .status(200).json({
+                    success: true,
+                    message: "User logged in successfully"
+                })
 
         } catch (error) {
             return res.status(500).json({
@@ -189,7 +201,7 @@ export default class AuthController {
 
 
             const user = await UserRepository.isEmailExist(email)
-            console.log(user)
+
             if (!user) {
                 return res.status(400).json({
                     success: false,
@@ -198,7 +210,6 @@ export default class AuthController {
             }
             let otp;
             otp = await OtpRepository.resendOtp(email, user._id);
-            console.log(otp)
 
             await MailService.emailVerify(email, Number(otp.otp));
 

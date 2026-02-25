@@ -4,7 +4,6 @@ import Otp from "../models/otp.model.ts"
 export default class OtpRepository {
     static getData = async (userId: string) => {
         const data = await Otp.findOne({ userId })
-        console.log(data)
         if (!data) {
             throw new Error("Otp not exists")
         }

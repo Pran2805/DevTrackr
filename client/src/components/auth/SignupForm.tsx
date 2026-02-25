@@ -58,7 +58,6 @@ export default function SignupForm() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-6">
 
-        {/* Full Name */}
         <div className="grid gap-2">
           <Label htmlFor="fullName">Full Name</Label>
           <Input
@@ -74,7 +73,6 @@ export default function SignupForm() {
           )}
         </div>
 
-        {/* Email */}
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
           <Input
