@@ -38,4 +38,12 @@ export default class UserRepository {
             throw new Error("Failed to verify user");
         }
     };
+
+    static findUserById = async (id: any) => {
+        const user = await User.findOne({ _id: id })
+        if (!user) {
+            throw new Error("User not exists")
+        }
+        return user;
+    }
 }

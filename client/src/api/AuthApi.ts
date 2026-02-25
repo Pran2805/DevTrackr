@@ -24,3 +24,7 @@ export async function LoginApi(data: any) {
     const response = await axiosInstance.post("/auth/login", data)
     return response.data;
 }
+export async function checkAuthStatus(data: any) {
+    const response = await axiosInstance.post("/auth/me", data)
+    return response.data;
+}

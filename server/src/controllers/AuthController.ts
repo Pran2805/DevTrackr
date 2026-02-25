@@ -5,6 +5,7 @@ import OtpRepository from "../repositories/OtpRepository.ts"
 import MailService from "../services/MailService.ts"
 import Otp from "../models/otp.model.ts"
 import ENV from "../utils/env.ts"
+import User from "../models/user.model.ts"
 
 export default class AuthController {
     static signup = async (req: Request, res: Response): Promise<Response> => {
@@ -168,7 +169,7 @@ export default class AuthController {
             }
 
             const token = await AuthService.createToken(String(user._id))
-            
+
             return res.cookie("auth", token, {
                 httpOnly: true,
                 secure: ENV.nodeEnv === "production",
@@ -227,4 +228,25 @@ export default class AuthController {
             });
         }
     };
+
+
+    static isLogin = async (req: Request, res: Response) => {
+        try {
+            const user = req.user;
+            if (!user) {
+                throw new Error("User not logged in")
+            }
+            return res.status(200).json({
+                message: "User logged in",
+                user,
+                success: true
+            })
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                error,
+                message: "Internal Server Error"
+            });
+        }
+    }
 }
