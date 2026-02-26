@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { ArrowRight, PlayCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const HeroLeftSection = memo(() => {
     return (
@@ -52,14 +52,6 @@ const HeroLeftSection = memo(() => {
                 >
                     Get Started
                     <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-                <Button
-                    size="lg"
-                    variant="outline"
-                    className="group w-full border-2 border-slate-200 bg-white/50 px-8 py-6 text-base font-medium text-slate-900 backdrop-blur-sm hover:bg-slate-100 hover:text-slate-900 sm:w-auto"
-                >
-                    <PlayCircle className="mr-2 size-5" />
-                    View Demo
                 </Button>
             </div>
 

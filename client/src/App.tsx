@@ -6,6 +6,7 @@ import VerifyOtp from './pages/auth/VerifyOtp';
 import LandingPage from './pages/LandingPage';
 import { useAuth } from './hooks/useAuth';
 import { Loader2 } from 'lucide-react';
+import DashboardPage from './pages/DashboardPage';
 
 const App = () => {
   const { isLoggedIn, isLoading } = useAuth();
@@ -35,6 +36,10 @@ const App = () => {
           element={!isLoggedIn ? <VerifyOtp /> : <Navigate to="/dashboard" replace />}
         />
 
+        <Route
+          path='/dashboard'
+          element={<DashboardPage />}
+        />
         <Route
           path='*'
           element={<Navigate to={isLoggedIn ? "/dashboard" : "/"} replace />}
