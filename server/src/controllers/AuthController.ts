@@ -249,4 +249,16 @@ export default class AuthController {
             });
         }
     }
+
+    static logout = async (req: Request, res: Response) => {
+        try {
+            res.clearCookie("auth")
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                error,
+                message: "Internal Server Error"
+            });
+        }
+    }
 }
