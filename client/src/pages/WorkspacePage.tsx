@@ -68,7 +68,6 @@ export default function WorkspacePage() {
 
     return (
         <div className="space-y-6">
-            {/* Header Section */}
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Workspaces</h1>
@@ -83,7 +82,6 @@ export default function WorkspacePage() {
                 </Button>
             </div>
 
-            {/* Workspaces Grid */}
             <div className="pt-4">
                 {myWorkspace && myWorkspace.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -112,7 +110,6 @@ export default function WorkspacePage() {
                                             </div>
                                         </div>
                                         
-                                        {/* Options Menu */}
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -138,7 +135,6 @@ export default function WorkspacePage() {
                                 </CardHeader>
                                 
                                 <CardContent>
-                                    {/* Stats */}
                                     <div className="flex gap-4 mt-2">
                                         <div className="flex items-center gap-1.5">
                                             <Users className="size-4 text-muted-foreground" />
@@ -152,7 +148,6 @@ export default function WorkspacePage() {
                                         </div>
                                     </div>
 
-                                    {/* Last active (optional) */}
                                     <p className="text-xs text-muted-foreground mt-3">
                                         Last active 2 hours ago
                                     </p>
@@ -161,7 +156,6 @@ export default function WorkspacePage() {
                         ))}
                     </div>
                 ) : (
-                    // Empty State
                     <div className="text-center py-20">
                         <div className="flex justify-center mb-4">
                             <div className="p-4 bg-muted rounded-full">
