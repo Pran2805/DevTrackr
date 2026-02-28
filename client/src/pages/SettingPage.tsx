@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bell, Lock, Palette, User } from "lucide-react";
+import { Bell, Lock, User } from "lucide-react";
 
 export default function SettingPage() {
     return (

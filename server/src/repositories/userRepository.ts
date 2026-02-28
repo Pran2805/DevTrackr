@@ -46,4 +46,18 @@ export default class UserRepository {
         }
         return user;
     }
+
+    static addUserInWorkspace = async (userId: string, workspace: any) => {
+        await User.findByIdAndUpdate(userId, {
+            $push: { workspaces: workspace._id }
+        });
+    }
+
+    static addMembersInWorkspace = async (members: any[], workspace: any) => {
+        for (const member of members) {
+            await User.findByIdAndUpdate(member.userId, {
+                $push: { workspaces: workspace._id }
+            });
+        }
+    }
 }

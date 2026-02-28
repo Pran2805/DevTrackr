@@ -9,61 +9,124 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { toast } from "sonner"
+import { CreateWorkspaceModal } from "@/components/modal/CreateWorkspaceModal";
 
 export default function WorkspacePage() {
-    const myWorkspace = [
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [workspaces, setWorkspaces] = useState([
         {
             name: "My Workspace",
             desc: "My Personal Workspace",
             img: "https://github.com/pranav-2805.png",
             members: 5,
-            projects: 12
+            projects: 12,
+            type: "personal",
+            visibility: "private"
         },
         {
             name: "Team Workspace",
             desc: "Team Collaboration Space",
             img: "https://github.com/pranav-2805.png",
             members: 8,
-            projects: 24
+            projects: 24,
+            type: "team",
+            visibility: "team"
         },
         {
             name: "Client Projects",
             desc: "Client-facing workspace",
             img: "https://github.com/pranav-2805.png",
             members: 3,
-            projects: 6
+            projects: 6,
+            type: "client",
+            visibility: "private"
         },
         {
             name: "Development",
             desc: "Dev team workspace",
             img: "https://github.com/pranav-2805.png",
             members: 12,
-            projects: 18
+            projects: 18,
+            type: "team",
+            visibility: "team"
         },
         {
             name: "Marketing",
             desc: "Marketing campaigns",
             img: "https://github.com/pranav-2805.png",
             members: 4,
-            projects: 8
+            projects: 8,
+            type: "team",
+            visibility: "private"
         },
         {
             name: "Design",
             desc: "Design team workspace",
             img: "https://github.com/pranav-2805.png",
             members: 6,
-            projects: 15
+            projects: 15,
+            type: "team",
+            visibility: "team"
         },
-    ];
+    ]);
 
     const handleNewWorkspace = () => {
-        // Add your logic for creating new workspace
-        console.log("Creating new workspace...");
+        setIsModalOpen(true);
     };
 
-    const handleWorkspaceClick = (workspaceName: string) => {
-        // Add your logic for workspace navigation
-        console.log(`Navigating to ${workspaceName}...`);
+    const handleCreateWorkspace = (newWorkspace: any) => {
+        // Add the new workspace to the list
+        setWorkspaces(prev => [...prev, {
+            name: newWorkspace.name,
+            desc: newWorkspace.description || `${newWorkspace.type} workspace`,
+            img: newWorkspace.avatar,
+            members: newWorkspace.members,
+            projects: newWorkspace.projects,
+            type: newWorkspace.type,
+            visibility: newWorkspace.visibility
+        }]);
+
+        toast.success(
+            "Workspace Created! 🎉", {
+            description: `"${newWorkspace.name}" has been successfully created.`,
+        });
+
+    };
+
+    const handleWorkspaceClick = (_workspaceName: string) => {
+    };
+
+    const handleEditWorkspace = (e: React.MouseEvent, workspace: any) => {
+        e.stopPropagation();
+        toast("Edit Workspace", {
+            description: `Editing ${workspace.name}`,
+        });
+    };
+
+    const handleDuplicateWorkspace = (e: React.MouseEvent, workspace: any) => {
+        e.stopPropagation();
+        const duplicated = {
+            ...workspace,
+            name: `${workspace.name} (Copy)`,
+            members: 1,
+            projects: 0
+        };
+        setWorkspaces(prev => [...prev, duplicated]);
+        toast.warning("Workspace Duplicated", {
+            description: `${workspace.name} has been duplicated.`,
+        });
+    };
+
+    const handleDeleteWorkspace = (e: React.MouseEvent, workspace: any) => {
+        e.stopPropagation();
+        if (confirm(`Are you sure you want to delete "${workspace.name}"?`)) {
+            setWorkspaces(prev => prev.filter(w => w.name !== workspace.name));
+            toast("Workspace Deleted", {
+                description: `${workspace.name} has been removed.`,
+            });
+        }
     };
 
     return (
@@ -83,11 +146,11 @@ export default function WorkspacePage() {
             </div>
 
             <div className="pt-4">
-                {myWorkspace && myWorkspace.length > 0 ? (
+                {workspaces && workspaces.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {myWorkspace.map((workspace, index) => (
-                            <Card 
-                                key={index} 
+                        {workspaces.map((workspace, index) => (
+                            <Card
+                                key={index}
                                 className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-2 hover:border-primary/20"
                                 onClick={() => handleWorkspaceClick(workspace.name)}
                             >
@@ -109,7 +172,7 @@ export default function WorkspacePage() {
                                                 </p>
                                             </div>
                                         </div>
-                                        
+
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -117,15 +180,15 @@ export default function WorkspacePage() {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
-                                                <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                                                <DropdownMenuItem onClick={(e) => handleEditWorkspace(e, workspace)}>
                                                     Edit Workspace
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                                                <DropdownMenuItem onClick={(e) => handleDuplicateWorkspace(e, workspace)}>
                                                     Duplicate
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem 
+                                                <DropdownMenuItem
                                                     className="text-red-600"
-                                                    onClick={(e) => e.stopPropagation()}
+                                                    onClick={(e) => handleDeleteWorkspace(e, workspace)}
                                                 >
                                                     Delete
                                                 </DropdownMenuItem>
@@ -133,7 +196,7 @@ export default function WorkspacePage() {
                                         </DropdownMenu>
                                     </div>
                                 </CardHeader>
-                                
+
                                 <CardContent>
                                     <div className="flex gap-4 mt-2">
                                         <div className="flex items-center gap-1.5">
@@ -146,6 +209,15 @@ export default function WorkspacePage() {
                                                 {workspace.projects} projects
                                             </Badge>
                                         </div>
+                                    </div>
+
+                                    <div className="flex gap-2 mt-2">
+                                        <Badge variant="outline" className="text-xs capitalize">
+                                            {workspace.type}
+                                        </Badge>
+                                        <Badge variant="outline" className="text-xs capitalize">
+                                            {workspace.visibility}
+                                        </Badge>
                                     </div>
 
                                     <p className="text-xs text-muted-foreground mt-3">
@@ -173,6 +245,12 @@ export default function WorkspacePage() {
                     </div>
                 )}
             </div>
+
+            <CreateWorkspaceModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onCreateWorkspace={handleCreateWorkspace}
+            />
         </div>
     );
 }
